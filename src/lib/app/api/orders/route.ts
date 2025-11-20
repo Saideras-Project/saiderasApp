@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "../../../lib/prisma";
+import type { OrderStatus } from "@prisma/client";
 import { getAuth } from "../api/authUtils";
 export async function POST(req: NextRequest) {
   const auth = await getAuth(req);
