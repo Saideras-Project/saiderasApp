@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import type { OrderStatus } from "@prisma/client";
 import { getAuth } from "../api/authUtils";
-export async function POST(req: NextRequest) {
+export async function createOrder(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-export async function GET(req: NextRequest) {
+export async function getAllOrders(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
