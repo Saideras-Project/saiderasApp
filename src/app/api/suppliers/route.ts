@@ -1,11 +1,11 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from "./../../../lib/prisma";
 
 export async function createSuppliers(request: NextRequest) {
   const userRole = request.headers.get("X-User-Role");
 
-  if (userRole !== "MANAGER") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (userRole !== 'MANAGER') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {
@@ -13,7 +13,7 @@ export async function createSuppliers(request: NextRequest) {
     const { name, cnpj, contact } = body;
 
     if (!name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
     const supplier = await prisma.supplier.create({
@@ -26,11 +26,8 @@ export async function createSuppliers(request: NextRequest) {
 
     return NextResponse.json(supplier, { status: 201 });
   } catch (error) {
-    console.error("Error creating supplier:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error('Error creating supplier:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -39,10 +36,7 @@ export async function getSuppliers(request: NextRequest) {
     const suppliers = await prisma.supplier.findMany();
     return NextResponse.json(suppliers);
   } catch (error) {
-    console.error("Error fetching suppliers:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error('Error fetching suppliers:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

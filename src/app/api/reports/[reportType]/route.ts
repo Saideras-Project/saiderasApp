@@ -34,7 +34,7 @@ function getEndDate(dateString: string): Date {
 }
 
 
-export async function getReport(
+export async function GET(
   request: NextRequest,
   { params }: { params: { reportType: string } }
 ) {
@@ -67,6 +67,10 @@ export async function getReport(
       case 'fluxoCaixa':
         const fluxoCaixa = await getFluxoCaixaReport(dateFrom, dateTo);
         return NextResponse.json(fluxoCaixa);
+
+      case 'detailed_orders':
+        const orders = await getDetailedOrdersReport(dateFrom, dateTo);
+        return NextResponse.json(orders);
 
       default:
         return NextResponse.json({ message: "Tipo de relatório inválido." }, { status: 400 });
@@ -187,4 +191,56 @@ async function getFluxoCaixaReport(from: Date, to: Date) {
     totalSaidas,
     saldo
   };
+}
+
+async function getDetailedOrdersReport(from: Date, to: Date) {
+  const orders = await prisma.order.findMany({
+    where: {
+      status: { in: [OrderStatus.CLOSED, OrderStatus.PAID] },
+      updatedAt: { gte: from, lte: to }
+    },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: { name: true }
+          }
+        }
+      },
+      payments: true
+    },
+    orderBy: {
+      updatedAt: 'asc'
+    }
+  });
+
+  return orders.map(order => {
+    const paymentMethod = order.payments[0]?.paymentMethod || null;
+    let mappedPaymentMethod = 'other';
+    
+    if (paymentMethod === 'CREDIT') mappedPaymentMethod = 'card_credit';
+    else if (paymentMethod === 'DEBIT') mappedPaymentMethod = 'card_debit';
+    else if (paymentMethod === 'CASH') mappedPaymentMethod = 'cash';
+    else if (paymentMethod === 'PIX') mappedPaymentMethod = 'pix';
+
+    return {
+      id: order.id,
+      tableId: Number(order.table.replace(/\D/g, '')) || 0,
+      status: 'closed',
+      openTime: order.createdAt.toISOString(),
+      closeTime: order.closedAt?.toISOString() || order.updatedAt.toISOString(),
+      subtotal: Number(order.total) - Number(order.tip),
+      discount: 0,
+      tip: Number(order.tip),
+      total: Number(order.total),
+      paymentMethod: mappedPaymentMethod,
+      items: order.items.map(item => ({
+        id: item.id,
+        name: item.product.name,
+        quantity: item.quantity,
+        price: Number(item.unitPrice),
+        isCourtesy: item.isCourtesy
+      }))
+    };
+  });
 }
