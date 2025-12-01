@@ -30,7 +30,7 @@ async function getAuthManager(request: NextRequest) {
 }
 
 
-export async function getUsers(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     await getAuthManager(request);
 
@@ -57,7 +57,7 @@ export async function getUsers(request: NextRequest) {
 }
 
 
-export async function createUser(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     await getAuthManager(request);
 

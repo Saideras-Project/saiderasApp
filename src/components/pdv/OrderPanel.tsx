@@ -51,26 +51,32 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
       {/* Header */}
       <div className="p-6 border-b border-slate-200 dark:border-slate-800">
         <div className="flex justify-between items-start mb-2">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{comanda.table}</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {comanda.table}
+          </h2>
           <span className="bg-amber-500 text-slate-950 text-xs font-bold px-2 py-1 rounded uppercase">
             Em Aberto
           </span>
         </div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Aberta em {new Date(comanda.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          Aberta em{" "}
+          {new Date(comanda.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </p>
       </div>
 
       {/* Items List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {comanda.items.length === 0 ? (
+        {comanda.items && comanda?.items?.length === 0 ? (
           <div className="text-center py-8 text-slate-400 dark:text-slate-600">
             <p>Nenhum item adicionado.</p>
           </div>
         ) : (
-          comanda.items.map((item) => (
-            <div 
-              key={item.id} 
+          comanda?.items?.map((item) => (
+            <div
+              key={item.id}
               className="flex justify-between items-start p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 group"
             >
               <div className="flex-1">
@@ -83,7 +89,9 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
                   </span>
                 </div>
                 <div className="flex items-center justify-between mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  <span>{item.quantity}x {formatCurrency(Number(item.unitPrice))}</span>
+                  <span>
+                    {item.quantity}x {formatCurrency(Number(item.unitPrice))}
+                  </span>
                   {item.isCourtesy && (
                     <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase">
                       Cortesia
@@ -100,24 +108,28 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
       <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
         <form onSubmit={handleAdd} className="space-y-3">
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Produto</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              Produto
+            </label>
             <select
               value={selectedProduct}
               onChange={(e) => setSelectedProduct(e.target.value)}
               className="w-full p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
             >
               <option value="">Selecione...</option>
-              {products.map(p => (
+              {products.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name} - {formatCurrency(Number(p.sellingPrice))}
                 </option>
               ))}
             </select>
           </div>
-          
+
           <div className="flex gap-3">
             <div className="w-24">
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Qtd</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                Qtd
+              </label>
               <input
                 type="number"
                 min="1"
@@ -127,8 +139,8 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
               />
             </div>
             <div className="flex-1 pt-5">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full"
                 disabled={!selectedProduct}
                 icon={<Plus size={18} />}
@@ -145,7 +157,8 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
         <div className="space-y-2 text-sm">
           <div className="flex justify-between text-slate-500 dark:text-slate-400">
             <span>Subtotal</span>
-            <span>{formatCurrency(comanda.total)}</span> {/* Simplificado por enquanto */}
+            <span>{formatCurrency(comanda.total)}</span>{" "}
+            {/* Simplificado por enquanto */}
           </div>
           <div className="flex justify-between text-slate-500 dark:text-slate-400">
             <span>Taxa de Serviço (10%)</span>
@@ -157,9 +170,9 @@ export function OrderPanel({ comanda, products, onAddItem, onCloseAccount }: Ord
           </div>
         </div>
 
-        <Button 
-          onClick={onCloseAccount} 
-          variant="primary" 
+        <Button
+          onClick={onCloseAccount}
+          variant="primary"
           className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 text-lg focus:ring-emerald-500"
         >
           Fechar Conta

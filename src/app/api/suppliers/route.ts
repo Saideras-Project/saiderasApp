@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from "./../../../lib/prisma";
 
-export async function createSuppliers(request: NextRequest) {
-  const userRole = request.headers.get("X-User-Role");
+export async function POST(request: NextRequest) {
+  const userRole = request.headers.get('X-User-Role');
 
   if (userRole !== 'MANAGER') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -31,7 +31,7 @@ export async function createSuppliers(request: NextRequest) {
   }
 }
 
-export async function getSuppliers(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const suppliers = await prisma.supplier.findMany();
     return NextResponse.json(suppliers);

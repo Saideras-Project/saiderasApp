@@ -6,7 +6,7 @@ interface Params {
   id: string;
 }
 
-export async function getOneSupplier(request: NextRequest, context: { params: Params }) {
+export async function GET(request: NextRequest, context: { params: Params }) {
   const { id } = context.params;
 
   try {
@@ -25,7 +25,7 @@ export async function getOneSupplier(request: NextRequest, context: { params: Pa
   }
 }
 
-export async function updateOneSupplier(request: NextRequest, context: { params: Params }) {
+export async function PUT(request: NextRequest, context: { params: Params }) {
   const { id } = context.params;
   const userRole = request.headers.get('X-User-Role');
 
@@ -60,7 +60,7 @@ export async function updateOneSupplier(request: NextRequest, context: { params:
   }
 }
 
-export async function deleteOneSupplier(request: NextRequest, context: { params: Params }) {
+export async function DELETE(request: NextRequest, context: { params: Params }) {
   const { id } = context.params;
   const userRole = request.headers.get('X-User-Role');
 

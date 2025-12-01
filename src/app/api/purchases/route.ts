@@ -10,7 +10,7 @@ const purchaseSchema = z.object({
   costPrice: z.number().positive(),
 });
 
-export async function createPurchase(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const userRole = request.headers.get('X-User-Role');
 
   if (userRole !== 'MANAGER') {
@@ -81,7 +81,7 @@ export async function createPurchase(request: NextRequest) {
   }
 }
 
-export async function getPurchases(request: NextRequest) {
+export async function GET(request: NextRequest) {
     const userRole = request.headers.get('X-User-Role');
 
     if (userRole !== 'MANAGER') {

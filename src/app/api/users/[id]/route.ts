@@ -25,7 +25,7 @@ async function getAuthManager(request: NextRequest) {
   }
 }
 
-export async function getOneUser(
+export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -57,7 +57,7 @@ export async function getOneUser(
 }
 
 
-export async function updateUser(
+export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -107,7 +107,7 @@ export async function updateUser(
 }
 
 
-export async function deleteUser(
+export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {

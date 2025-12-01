@@ -9,7 +9,7 @@ interface Params {
   };
 }
 
-export async function getOneProduct(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, { params }: Params) {
   const { id } = params;
   try {
     const product = await prisma.product.findUnique({
@@ -24,7 +24,7 @@ export async function getOneProduct(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function updateOneProduct(request: NextRequest, { params }: Params) {
+export async function PUT(request: NextRequest, { params }: Params) {
   const userRole = request.headers.get('X-User-Role');
   if (userRole !== 'MANAGER') {
     return NextResponse.json({ message: 'Acesso negado. Somente gerentes podem atualizar produtos.' }, { status: 403 });
@@ -64,7 +64,7 @@ export async function updateOneProduct(request: NextRequest, { params }: Params)
   }
 }
 
-export async function deleteOneProduct(request: NextRequest, { params }: Params) {
+export async function DELETE(request: NextRequest, { params }: Params) {
   const userRole = request.headers.get('X-User-Role');
   if (userRole !== 'MANAGER') {
     return NextResponse.json({ message: 'Acesso negado. Somente gerentes podem deletar produtos.' }, { status: 403 });

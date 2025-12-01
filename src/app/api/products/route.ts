@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { getAuth } from "../api/authUtils";
 
-export async function getProductsT(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,7 +22,7 @@ export async function getProductsT(req: NextRequest) {
   }
 }
 
-export async function createProduct(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 import bcrypt from 'bcryptjs';
 
-export async function registerUser(request: Request) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, username, password } = body;

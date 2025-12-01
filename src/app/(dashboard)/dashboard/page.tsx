@@ -182,7 +182,7 @@ export default function DashboardPage() {
           <Card className="h-full">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">Alertas de Estoque</h3>
             <div className="space-y-4">
-              {stats.lowStockItems.length === 0 ? (
+              {stats?.lowStockItems?.length === 0 ? (
                 <p className="text-slate-500 text-sm text-center py-8">Nenhum item com estoque baixo.</p>
               ) : (
                 stats.lowStockItems.map(item => (

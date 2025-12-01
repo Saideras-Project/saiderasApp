@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { prisma } from "./../../../../lib/prisma";
 
-export async function getOneOrder(
+export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {

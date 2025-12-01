@@ -3,7 +3,7 @@ import { prisma } from '../../../../lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-export async function loginUser(request: Request) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { username, password } = body;

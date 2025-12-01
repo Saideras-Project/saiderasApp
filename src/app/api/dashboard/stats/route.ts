@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getAuth } from "../../api/authUtils";
 
-export async function getStats(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user || auth.user.role !== 'MANAGER') {

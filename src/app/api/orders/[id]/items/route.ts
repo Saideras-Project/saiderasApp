@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "./../../../../../lib/prisma";
 import { getAuth } from "<saidera>/app/api/api/authUtils";
 
-export async function createOrderItem(
+export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
