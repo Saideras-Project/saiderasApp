@@ -1,19 +1,81 @@
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Lista todos os produtos
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Lista de produtos retornada com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Cria um novo produto
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - sellingPrice
+ *               - unitOfMeasure
+ *               - category
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               sellingPrice:
+ *                 type: number
+ *               unitOfMeasure:
+ *                 type: string
+ *               minStockLevel:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *                 enum:
+ *                   - FOOD
+ *                   - DRINK
+ *                   - CLEANING
+ *                   - OTHER
+ *     responses:
+ *       201:
+ *         description: Produto criado com sucesso
+ *       400:
+ *         description: Dados inválidos ou campos obrigatórios ausentes
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado (somente ADMIN)
+ *       409:
+ *         description: Já existe um produto com esse nome ou campo único
+ *       500:
+ *         description: Erro interno do servidor
+ */
+
+
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "../../../lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProductCategory } from "@prisma/client";
 import { getAuth } from "../api/authUtils";
 
-export async function getProductsT(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        stockEntries: true, 
-      },
-    });
+    const products = await prisma.product.findMany();
 
     return NextResponse.json(products);
   } catch (error) {
@@ -22,30 +84,44 @@ export async function getProductsT(req: NextRequest) {
   }
 }
 
-export async function createProduct(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const auth = await getAuth(req);
   if (auth.error) return auth.error;
   if (!auth.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  console.log("User role:", auth.user);
-  if (auth.user.role !== 'MANAGER') {
-    return NextResponse.json({ message: 'Acesso negado. Somente gerentes podem criar produtos.' }, { status: 403 });
+  if (auth.user.role !== "ADMIN") {
+    return NextResponse.json(
+      { message: "Acesso negado. Somente gerentes podem criar produtos." },
+      { status: 403 }
+    );
   }
 
   try {
     const body = await req.json();
-    const { name, description, sellingPrice, unitOfMeasure, minStockLevel } = body;
+    const { name, description, sellingPrice, unitOfMeasure, minStockLevel, category } = body;
 
-    if (!name || !sellingPrice || !unitOfMeasure) {
-      return NextResponse.json({ message: 'Campos obrigatórios (name, sellingPrice, unitOfMeasure) não foram preenchidos.' }, { status: 400 });
+    if (!name || !sellingPrice || !unitOfMeasure || !category) {
+      return NextResponse.json({ message: 'Campos obrigatórios (name, sellingPrice, unitOfMeasure, category) não foram preenchidos.' }, { status: 400 });
+    }
+
+    // Validação da categoria
+    let validCategory: ProductCategory = ProductCategory.OTHER;
+    if (Object.values(ProductCategory).includes(category as ProductCategory)) {
+      validCategory = category as ProductCategory;
+    } else {
+      // Mapeamento básico se necessário ou rejeição. Aqui assumiremos OTHER para valores desconhecidos como "Geral"
+      // Ou podemos retornar um erro se preferir rigidez:
+      // return NextResponse.json({ message: 'Categoria inválida.' }, { status: 400 });
+      console.warn(`Categoria '${category}' não reconhecida. Usando 'OTHER'.`);
     }
 
     const newProduct = await prisma.product.create({
       data: {
         name,
         description,
-        sellingPrice: new Prisma.Decimal(sellingPrice), 
+        sellingPrice: new Prisma.Decimal(sellingPrice),
         unitOfMeasure,
+        category: validCategory,
         minStockLevel: minStockLevel ? parseInt(minStockLevel) : undefined,
       },
     });
