@@ -85,11 +85,11 @@ export default function RelatoriosPage() {
   }, [orders, dateStart, dateEnd]);
 
   const kpis = useMemo(() => {
-    const totalRevenue = filteredOrders.reduce((acc, o) => acc + o.total, 0);
-    const totalTips = filteredOrders.reduce((acc, o) => acc + o.tip, 0);
+    const totalRevenue = filteredOrders.reduce((acc, o) => acc + Number(o.total), 0);
+    const totalTips = filteredOrders.reduce((acc, o) => acc + Number(o.tip), 0);
     const totalOrders = filteredOrders.length;
     const averageTicket = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-    const totalDiscount = filteredOrders.reduce((acc, o) => acc + o.discount, 0);
+    const totalDiscount = filteredOrders.reduce((acc, o) => acc + Number(o.discount), 0);
 
     return { totalRevenue, totalTips, totalOrders, averageTicket, totalDiscount };
   }, [filteredOrders]);
@@ -100,7 +100,7 @@ export default function RelatoriosPage() {
     filteredOrders.forEach(o => {
       const dateKey = new Date(o.openTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
       const current = dataMap.get(dateKey) || 0;
-      dataMap.set(dateKey, current + o.total);
+      dataMap.set(dateKey, current + Number(o.total));
     });
 
     return Array.from(dataMap.entries()).map(([name, value]) => ({ name, value }));
